@@ -15,6 +15,7 @@ CREATE TABLE book (
     isbn VARCHAR(13) NOT NULL UNIQUE,
     title VARCHAR(150) NOT NULL,
     year INT NOT NULL,
+    era ENUM('BC', 'AD') NOT NULL DEFAULT 'AD',
     location VARCHAR(4) NOT NULL,
     FOREIGN KEY (author_id)
         REFERENCES author(id)
