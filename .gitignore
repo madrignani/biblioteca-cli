@@ -1,0 +1,6 @@
+# Configuration files
+vendor
+composer.lock
+
+# Study notes file
+docs/notes.txt

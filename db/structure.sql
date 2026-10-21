@@ -1,0 +1,22 @@
+CREATE DATABASE IF NOT EXISTS library
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+USE library;
+
+CREATE TABLE author (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(70) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE book (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    author_id INT NOT NULL,
+    isbn VARCHAR(13) NOT NULL UNIQUE,
+    title VARCHAR(150) NOT NULL,
+    year INT NOT NULL,
+    location VARCHAR(4) NOT NULL,
+    FOREIGN KEY (author_id)
+        REFERENCES author(id)
+        ON DELETE RESTRICT
+) ENGINE=InnoDB;
