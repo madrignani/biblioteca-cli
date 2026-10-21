@@ -1,4 +1,5 @@
 {
+    
     "name": "giovanni/library-management",
     "description": "A small command-line application for managing books and authors",
     "version": "0.1.0",
