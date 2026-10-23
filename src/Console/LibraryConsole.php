@@ -3,6 +3,7 @@
 
 namespace App\Console;
 
+
 use App\Control\CreateAuthorController;
 use App\Control\CreateBookController;
 use App\Control\DeleteBookController;
@@ -22,12 +23,12 @@ class LibraryConsole {
         private DeleteBookController $deleteBookController,
         private ListBooksController $listBooksController,
         private UpdateBookController $updateBookController
-    ) { }
+    ) {}
 
     public function menu() : void {
-        while(true){
-            echo('Escolha abaixo a opção desejada:');
+        while(true) {
             echo(
+                'Escolha abaixo a opção desejada:' . str_repeat(PHP_EOL, 2) .
                 '1 para cadastrar autor' . PHP_EOL . 
                 '2 para cadastrar livro' . PHP_EOL . 
                 '3 para listar livros de um autor' . PHP_EOL .
@@ -72,7 +73,7 @@ class LibraryConsole {
             $this->createAuthorController->create($name);
             echo('Autor cadastrado com sucesso.');
         } catch(DomainException $exception) {
-            foreach ($exception->getProblems() as $problem) {
+            foreach($exception->getProblems() as $problem) {
                 echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
             }
         } catch(RepositoryException $exception) {
@@ -84,30 +85,27 @@ class LibraryConsole {
 
     private function createBook() : void {
         echo('Informe o ISBN do livro: ');
-        $isbn = trim(readline());
+        $isbn = readline();
         echo('Informe o título do livro: ');
-        $title = trim(readline());
+        $title = readline();
         echo('Informe o ano de publicação: ');
-        $year = (int) trim(readline());
-        echo('Informe a era da publicação (BC ou AD): ');
-        $era = Era::tryFrom(strtoupper(trim(readline())));
+        $year = (int)readline();
+        echo('Informe a era da publicação (AC ou DC): ');
+        $inputEra = strtoupper(readline());
+        $era = match($inputEra) {
+            'AC' => Era::BC,
+            'DC' => Era::AD,
+            default => null,
+        };
         echo('Informe a localização do livro: ');
-        $location = trim(readline());
+        $location = readline();
         echo('Informe o nome do autor: ');
-        $authorName = trim(readline());
-
+        $authorName = readline();
         try{ 
-            $this->createBookController->create(
-                $isbn,
-                $title,
-                $year,
-                $era,
-                $location,
-                $authorName
-            );
+            $this->createBookController->create($isbn, $title, $year, $era, $location, trim($authorName));
             echo('Livro cadastrado com sucesso.');
         } catch(DomainException $exception) {
-            foreach ($exception->getProblems() as $problem) {
+            foreach($exception->getProblems() as $problem) {
                 echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
             }
         } catch(RepositoryException $exception) {
@@ -119,84 +117,72 @@ class LibraryConsole {
 
     private function listBooks() : void {
         echo('Informe o nome do autor: ');
-        $name = trim(readline());
-
+        $name = readline();
         try{ 
             $books = $this->listBooksController->listByAuthor($name);
             foreach ($books as $book) {
                 print_r($book);
             }
         } catch(DomainException $exception) {
-            foreach ($exception->getProblems() as $problem) {
+            foreach($exception->getProblems() as $problem) {
                 echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
             }
         } catch(RepositoryException $exception) {
             echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             echo('[ERRO] ' . $exception->getMessage() . '.');
         }
     }
 
     private function searchBook() : void {
         echo('Informe o título do livro: ');
-        $title = trim(readline());
-
+        $title = readline();
         try{ 
             $books = $this->listBooksController->listByTitle($title);
             foreach ($books as $book) {
                 print_r($book);
             }
         } catch(DomainException $exception) {
-            foreach ($exception->getProblems() as $problem) {
+            foreach($exception->getProblems() as $problem) {
                 echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
             }
         } catch(RepositoryException $exception) {
             echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             echo('[ERRO] ' . $exception->getMessage() . '.');
         }
     }
 
     private function updateBook() : void {
         echo('Informe o ISBN do livro: ');
-        $isbn = trim(readline());
-
+        $isbn = readline();
         try{ 
-            $updated = $this->updateBookController->update($isbn);
-            if ($updated) {
-                echo('Livro atualizado com sucesso.');
-            } else {
-                echo('Nenhum livro foi atualizado.');
-            }
+            $this->updateBookController->update($isbn);
+            echo('Livro atualizado com sucesso.');
         } catch(DomainException $exception) {
             foreach ($exception->getProblems() as $problem) {
                 echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
             }
         } catch(RepositoryException $exception) {
             echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             echo('[ERRO] ' . $exception->getMessage() . '.');
         }
     }
 
     private function deleteBook() : void {
         echo('Informe o ISBN do livro: ');
-        $isbn = trim(readline());
-
+        $isbn = readline();
         try{ 
-            $deleted = $this->deleteBookController->delete($isbn);
-            if ($deleted) {
-                echo('Livro excluído com sucesso.');
-            } else {
-                echo('Nenhum livro foi excluído.');
-            }
+            $this->deleteBookController->delete($isbn);
+            echo('Livro excluído com sucesso.');
         } catch(DomainException $exception) {
             foreach ($exception->getProblems() as $problem) {
                 echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
             }
         } catch(RepositoryException $exception) {
             echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             echo('[ERRO] ' . $exception->getMessage() . '.');
         }
     }

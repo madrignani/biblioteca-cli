@@ -10,23 +10,15 @@ use App\Enum\Era;
 
 class Book {
 
-    private int $id;
-    private string $isbn;
-    private string $title;
-    private int $year;
-    private Era $era;
-    private string $location;
-    private Author $author;
-
-    public function __construct(int $id, string $isbn, string $title, int $year, Era $era, string $location, Author $author) {
-        $this->id = $id;
-        $this->isbn = $isbn;
-        $this->title = $title;
-        $this->year = $year;
-        $this->era = $era;
-        $this->location = $location;
-        $this->author = $author;
-    }
+    public function __construct(
+        private int $id,
+        private string $isbn,
+        private string $title,
+        private int $year,
+        private Era $era,
+        private string $location,
+        private Author $author
+    ) {}
 
     public function getId() : int {
         return $this->id;

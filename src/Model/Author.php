@@ -6,13 +6,10 @@ namespace App\Model;
 
 class Author {
 
-    private int $id;
-    private string $name;
-
-    public function __construct(int $id, string $name) {
-        $this->id = $id;
-        $this->name = $name;
-    }
+    public function __construct(
+        private int $id,
+        private string $name
+    ) {}
 
     public function getId() : string {
         return $this->id;

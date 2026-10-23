@@ -1,22 +1,29 @@
 <?php
 
 
-require_once __DIR__ . 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 
+use App\Config\Connection;
 use App\Console\LibraryConsole;
 use App\Control\CreateAuthorController;
 use App\Control\CreateBookController;
 use App\Control\DeleteBookController;
 use App\Control\ListBooksController;
 use App\Control\UpdateBookController;
+use App\Repository\AuthorRepositoryBdr;
+use App\Repository\BookRepositoryBdr;
 
-$createAuthor = new CreateAuthorController();
-$createBook = new CreateBookController();
-$deleteBook = new DeleteBookController();
-$listBooks = new ListBooksController();
-$updateBook = new UpdateBookController();
 
+$connection = new Connection();
+$pdo = $connection->connect();
+$authorRepo = new AuthorRepositoryBdr($pdo);
+$bookRepo = new BookRepositoryBdr($pdo);
+$createAuthor = new CreateAuthorController($authorRepo);
+$createBook = new CreateBookController($authorRepo, $bookRepo);
+$deleteBook = new DeleteBookController($bookRepo);
+$listBooks = new ListBooksController($authorRepo, $bookRepo);
+$updateBook = new UpdateBookController($bookRepo);
 $console = new LibraryConsole($createAuthor, $createBook, $deleteBook, $listBooks, $updateBook);
 $console->menu();
 
