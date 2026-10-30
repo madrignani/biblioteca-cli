@@ -22,7 +22,7 @@ $bookRepo = new BookRepositoryBdr($pdo);
 $createAuthor = new CreateAuthorController($authorRepo);
 $createBook = new CreateBookController($authorRepo, $bookRepo);
 $deleteBook = new DeleteBookController($bookRepo);
-$listBooks = new ListBooksController($authorRepo, $bookRepo);
+$listBooks = new ListBooksController($bookRepo);
 $updateBook = new UpdateBookController($bookRepo);
 $console = new LibraryConsole($createAuthor, $createBook, $deleteBook, $listBooks, $updateBook);
 $console->menu();

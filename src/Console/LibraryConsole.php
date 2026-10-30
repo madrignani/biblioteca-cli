@@ -32,7 +32,7 @@ class LibraryConsole {
                 '1 para cadastrar autor' . PHP_EOL . 
                 '2 para cadastrar livro' . PHP_EOL . 
                 '3 para listar livros de um autor' . PHP_EOL .
-                '4 para pesquisar livro' . PHP_EOL . 
+                '4 para pesquisar livro pelo título' . PHP_EOL . 
                 '5 para atualizar dados de um livro' . PHP_EOL . 
                 '6 para excluir livro' . PHP_EOL .
                 '0 para sair'
@@ -46,10 +46,10 @@ class LibraryConsole {
                     $this->createBook();
                     break;
                 case '3':
-                    $this->listBooks();
+                    $this->listBooksByAuthor();
                     break;
                 case '4':
-                    $this->searchBook();
+                    $this->listBooksByTitle();
                     break;
                 case '5':
                     $this->updateBook();
@@ -97,6 +97,10 @@ class LibraryConsole {
             'DC' => Era::AD,
             default => null,
         };
+        if ($era === null) {
+            echo('[ERRO] Informe a era corretamente.');
+            return;
+        }
         echo('Informe a localização do livro: ');
         $location = readline();
         echo('Informe o nome do autor: ');
@@ -115,11 +119,15 @@ class LibraryConsole {
         }
     }
 
-    private function listBooks() : void {
+    private function listBooksByAuthor() : void {
         echo('Informe o nome do autor: ');
         $name = readline();
         try{ 
-            $books = $this->listBooksController->listByAuthor($name);
+            $books = $this->listBooksController->listByAuthor(trim($name));
+            if(empty($books)) {
+                echo('Nenhum livro encontrado para o autor pesquisado.');
+                return;
+            }
             foreach ($books as $book) {
                 print_r($book);
             }
@@ -134,11 +142,15 @@ class LibraryConsole {
         }
     }
 
-    private function searchBook() : void {
+    private function listBooksByTitle() : void {
         echo('Informe o título do livro: ');
         $title = readline();
         try{ 
-            $books = $this->listBooksController->listByTitle($title);
+            $books = $this->listBooksController->listByTitle(trim($title));
+            if(empty($books)) {
+                echo('Nenhum livro encontrado para o título pesquisado.');
+                return;
+            }
             foreach ($books as $book) {
                 print_r($book);
             }
