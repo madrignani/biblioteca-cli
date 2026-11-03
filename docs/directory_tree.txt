@@ -1,0 +1,62 @@
+|   .gitignore
+|   composer.json
+|   index.php
+|   LICENSE
+|   README.md
+|   
++---db
+|       data.sql
+|       structure.sql
+|       
++---docs
+|       assignment.pdf
+|       directory_tree.txt
+|       notes.txt
+|       script_in_text.txt
+|       
++---src
+|   +---Config
+|   |       Connection.php
+|   |       
+|   +---Console
+|   |       LibraryConsole.php
+|   |       
+|   +---Control
+|   |       CreateAuthorController.php
+|   |       CreateBookController.php
+|   |       DeleteBookController.php
+|   |       ListBooksController.php
+|   |       UpdateBookController.php
+|   |       
+|   +---Dto
+|   |       AuthorDto.php
+|   |       BookDto.php
+|   |       
+|   +---Enum
+|   |       Era.php
+|   |       
+|   +---Exception
+|   |       DomainException.php
+|   |       RepositoryException.php
+|   |       
+|   +---Model
+|   |       Author.php
+|   |       Book.php
+|   |       
+|   \---Repository
+|           AuthorRepository.php
+|           AuthorRepositoryBdr.php
+|           BookRepository.php
+|           BookRepositoryBdr.php
+|           
+\---vendor
+    |   autoload.php
+    |   
+    \---composer
+            autoload_classmap.php
+            autoload_namespaces.php
+            autoload_psr4.php
+            autoload_real.php
+            autoload_static.php
+            ClassLoader.php
+            LICENSE
