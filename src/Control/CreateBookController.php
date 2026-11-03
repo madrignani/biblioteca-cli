@@ -20,9 +20,9 @@ class CreateBookController {
     ) {}
 
     public function create(string $isbn, string $title, int $year, Era $era, string $location, string $authorName) : void {
-        $authorData = $this->authorRepository->findByName($authorName);
+        $authorData = $this->authorRepository->getByName($authorName);
         if(!($authorData)) {
-            throw new DomainException('Autor não encontrado para o nome informado.');
+            throw DomainException::withProblems( ['Autor não encontrado para o nome informado.'] );
         } 
         $author = new Author($authorData['id'], $authorData['name']);
         $problems = (new Book(0, $isbn, $title, $year, $era, $location, $author)->validate());

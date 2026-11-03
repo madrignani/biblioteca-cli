@@ -7,7 +7,7 @@ namespace App\Repository;
 use PDO;
 use PDOException;
 use App\Exception\RepositoryException;
-use Override;
+
 
 class AuthorRepositoryBdr implements AuthorRepository {
 
@@ -30,7 +30,7 @@ class AuthorRepositoryBdr implements AuthorRepository {
         }
     }
 
-    public function findByName(string $name): ?array {
+    public function getByName(string $name): ?array {
         try {
             $sql = <<<SQL
                 SELECT id, name FROM author
@@ -41,6 +41,9 @@ class AuthorRepositoryBdr implements AuthorRepository {
                 'name' => $name
             ] );
             $data = $statement->fetch();
+            if($data === false) {
+                return null;
+            }
             return $data;
         } catch(PDOException $exception) {
             throw new RepositoryException($exception->getMessage());

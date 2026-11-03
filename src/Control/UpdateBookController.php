@@ -20,7 +20,7 @@ class UpdateBookController {
     public function update(string $isbn, string $title, string $location): void {
         $bookData = $this->repository->getByIsbn($isbn);
         if ($bookData === null) {
-            throw new DomainException('Livro não encontrado.');
+            throw DomainException::withProblems( ['Livro não encontrado.'] );
         }
         $author = new Author( (int)$bookData['author_id'], $bookData['author_name'] );
         $book = new Book(

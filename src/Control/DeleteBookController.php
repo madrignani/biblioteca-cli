@@ -5,7 +5,8 @@ namespace App\Control;
 
 
 use App\Repository\BookRepository;
-use DomainException;
+use App\Exception\DomainException;
+
 
 class DeleteBookController {
 
@@ -16,7 +17,7 @@ class DeleteBookController {
     public function delete(string $isbn) : void {
         $deleted = $this->repository->delete($isbn);
         if(!($deleted)) {
-            throw new DomainException('Livro não encontrado para exclusão.');        
+            throw DomainException::withProblems( ['Livro não encontrado para exclusão.'] );        
         }
     }
 
