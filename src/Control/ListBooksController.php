@@ -12,11 +12,11 @@ use App\Repository\BookRepository;
 class ListBooksController {
 
     public function __construct(
-        private BookRepository $bookRepository
+        private BookRepository $repository
     ) {}
 
     public function listByAuthor(string $authorName) : ?array {
-        $books = $this->bookRepository->listByAuthor($authorName);
+        $books = $this->repository->getByAuthor($authorName);
         $booksDto = [];
         foreach ($books as $book) {
             $authorDto = ( 
@@ -31,7 +31,7 @@ class ListBooksController {
     }
 
     public function listByTitle(string $title) : ?array {
-        $books = $this->bookRepository->listByTitle($title);
+        $books = $this->repository->getByTitle($title);
         $booksDto = [];
         foreach ($books as $book) {
             $authorDto = ( 
@@ -43,6 +43,20 @@ class ListBooksController {
             $booksDto[] = $dto;
         }
         return $booksDto;
+    }
+
+    public function listByIsbn(string $isbn) : ?array {
+        $book = $this->repository->getByIsbn($isbn);
+        if(!($book)) {
+            return null;
+        }
+        $authorDto = ( 
+            new AuthorDto($book['author_id'], $book['author_name'])
+        )->arrayData();
+        $dto = (
+            new BookDto($book['id'], $book['isbn'], $book['title'], $book['year'], $book['era'], $book['location'], $authorDto)
+        )->arrayData();
+        return $dto;
     }
     
 }

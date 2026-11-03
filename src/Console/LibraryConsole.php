@@ -28,14 +28,19 @@ class LibraryConsole {
     public function menu() : void {
         while(true) {
             echo(
-                'Escolha abaixo a opção desejada:' . str_repeat(PHP_EOL, 2) .
-                '1 para cadastrar autor' . PHP_EOL . 
-                '2 para cadastrar livro' . PHP_EOL . 
-                '3 para listar livros de um autor' . PHP_EOL .
-                '4 para pesquisar livro pelo título' . PHP_EOL . 
-                '5 para atualizar dados de um livro' . PHP_EOL . 
-                '6 para excluir livro' . PHP_EOL .
-                '0 para sair'
+                PHP_EOL .
+                '========================================' . PHP_EOL .
+                '            BIBLIOTECA - CLI'             . PHP_EOL .
+                '========================================' . PHP_EOL . PHP_EOL .
+                'Selecione uma opção:' . PHP_EOL . PHP_EOL .
+                '  1 - Cadastrar autor' . PHP_EOL .
+                '  2 - Cadastrar livro' . PHP_EOL .
+                '  3 - Listar livros de um autor' . PHP_EOL .
+                '  4 - Pesquisar livro pelo título' . PHP_EOL .
+                '  5 - Atualizar dados de um livro' . PHP_EOL .
+                '  6 - Excluir livro' . PHP_EOL .
+                '  0 - Sair' . PHP_EOL . PHP_EOL .
+                'Opção: '
             );
             $option = readline();
             switch($option) {
@@ -60,37 +65,39 @@ class LibraryConsole {
                 case '0':
                     return;
                 default:
-                    echo('Opção inválida.');
+                    echo(PHP_EOL . '[ERRO] Opção inválida.' . PHP_EOL);
                     break;
             }
         }
     }
 
     private function createAuthor() : void {
-        echo('Informe o nome do autor: ');
+        echo(PHP_EOL . '--- Cadastro de autor ---' . PHP_EOL . PHP_EOL);
+        echo('Nome do autor: ');
         $name = readline();
         try{ 
             $this->createAuthorController->create($name);
-            echo('Autor cadastrado com sucesso.');
+            echo(PHP_EOL . '[SUCESSO] Autor cadastrado com sucesso.' . PHP_EOL);
         } catch(DomainException $exception) {
             foreach($exception->getProblems() as $problem) {
-                echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
+                echo(PHP_EOL . '[ERRO DE DOMÍNIO] ' . $problem . '.' . PHP_EOL);
             }
         } catch(RepositoryException $exception) {
-            echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.' . PHP_EOL);
         } catch (Exception $exception) {
-            echo('[ERRO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO] ' . $exception->getMessage() . '.' . PHP_EOL);
         } 
     }
 
     private function createBook() : void {
-        echo('Informe o ISBN do livro: ');
+        echo(PHP_EOL . '--- Cadastro de livro ---' . PHP_EOL . PHP_EOL);
+        echo('ISBN do livro: ');
         $isbn = readline();
-        echo('Informe o título do livro: ');
+        echo('Título do livro: ');
         $title = readline();
-        echo('Informe o ano de publicação: ');
+        echo('Ano de publicação: ');
         $year = (int)readline();
-        echo('Informe a era da publicação (AC ou DC): ');
+        echo('Era da publicação (AC ou DC): ');
         $inputEra = strtoupper(readline());
         $era = match($inputEra) {
             'AC' => Era::BC,
@@ -98,104 +105,125 @@ class LibraryConsole {
             default => null,
         };
         if ($era === null) {
-            echo('[ERRO] Informe a era corretamente.');
+            echo(PHP_EOL . '[ERRO] Informe uma era válida: AC ou DC.' . PHP_EOL);
             return;
         }
-        echo('Informe a localização do livro: ');
+        echo('Localização do livro: ');
         $location = readline();
-        echo('Informe o nome do autor: ');
+        echo('Nome do autor: ');
         $authorName = readline();
         try{ 
             $this->createBookController->create($isbn, $title, $year, $era, $location, trim($authorName));
-            echo('Livro cadastrado com sucesso.');
+            echo(PHP_EOL . '[SUCESSO] Livro cadastrado com sucesso.' . PHP_EOL);
         } catch(DomainException $exception) {
             foreach($exception->getProblems() as $problem) {
-                echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
+                echo(PHP_EOL . '[ERRO DE DOMÍNIO] ' . $problem . '.' . PHP_EOL);
             }
         } catch(RepositoryException $exception) {
-            echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.' . PHP_EOL);
         } catch (Exception $exception) {
-            echo('[ERRO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO] ' . $exception->getMessage() . '.' . PHP_EOL);
         }
     }
 
     private function listBooksByAuthor() : void {
-        echo('Informe o nome do autor: ');
+        echo(PHP_EOL . '--- Livros por autor ---' . PHP_EOL . PHP_EOL);
+        echo('Nome do autor: ');
         $name = readline();
         try{ 
             $books = $this->listBooksController->listByAuthor(trim($name));
             if(empty($books)) {
-                echo('Nenhum livro encontrado para o autor pesquisado.');
+                echo(PHP_EOL . 'Nenhum livro foi encontrado para o autor informado.' . PHP_EOL);
                 return;
             }
             foreach ($books as $book) {
+                echo(PHP_EOL . 'Livro encontrado:' . PHP_EOL);
                 print_r($book);
             }
         } catch(DomainException $exception) {
             foreach($exception->getProblems() as $problem) {
-                echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
+                echo(PHP_EOL . '[ERRO DE DOMÍNIO] ' . $problem . '.' . PHP_EOL);
             }
         } catch(RepositoryException $exception) {
-            echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.' . PHP_EOL);
         } catch(Exception $exception) {
-            echo('[ERRO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO] ' . $exception->getMessage() . '.' . PHP_EOL);
         }
     }
 
     private function listBooksByTitle() : void {
-        echo('Informe o título do livro: ');
+        echo(PHP_EOL . '--- Livros por título ---' . PHP_EOL . PHP_EOL);
+        echo('Título do livro: ');
         $title = readline();
         try{ 
             $books = $this->listBooksController->listByTitle(trim($title));
             if(empty($books)) {
-                echo('Nenhum livro encontrado para o título pesquisado.');
+                echo(PHP_EOL . 'Nenhum livro foi encontrado para o título informado.' . PHP_EOL);
                 return;
             }
             foreach ($books as $book) {
+                echo(PHP_EOL . 'Livro encontrado:' . PHP_EOL);
                 print_r($book);
             }
         } catch(DomainException $exception) {
             foreach($exception->getProblems() as $problem) {
-                echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
+                echo(PHP_EOL . '[ERRO DE DOMÍNIO] ' . $problem . '.' . PHP_EOL);
             }
         } catch(RepositoryException $exception) {
-            echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.' . PHP_EOL);
         } catch(Exception $exception) {
-            echo('[ERRO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO] ' . $exception->getMessage() . '.' . PHP_EOL);
         }
     }
 
     private function updateBook() : void {
-        echo('Informe o ISBN do livro: ');
+        echo(PHP_EOL . '--- Atualização de livro ---' . PHP_EOL . PHP_EOL);
+        echo('ISBN do livro: ');
         $isbn = readline();
         try{ 
-            $this->updateBookController->update($isbn);
-            echo('Livro atualizado com sucesso.');
+            $book = $this->listBooksController->listByIsbn(trim($isbn));
+            if(!($book)) {
+                echo(PHP_EOL . 'Nenhum livro foi encontrado para o ISBN informado.' . PHP_EOL);
+                return;
+            }
+            echo(PHP_EOL . 'Editando livro.' . PHP_EOL);
+            echo('Pressione ENTER para manter o valor atual.' . PHP_EOL . PHP_EOL);
+            echo('Título atual: ' . $book['title'] . PHP_EOL);
+            echo('Novo título: ');
+            $newTitle = readline();
+            $title = ( trim($newTitle) === '' ? $book['title'] : trim($newTitle) );
+            echo(PHP_EOL . 'Localização atual: ' . $book['location'] . PHP_EOL);
+            echo('Nova localização: ');
+            $newLocation = readline();
+            $location = ( trim($newLocation) === '' ? $book['location'] : trim($newLocation) );
+            $this->updateBookController->update($book['isbn'], $title, $location);
+            echo(PHP_EOL . '[SUCESSO] Livro atualizado com sucesso.' . PHP_EOL);
         } catch(DomainException $exception) {
             foreach ($exception->getProblems() as $problem) {
-                echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
+                echo(PHP_EOL . '[ERRO DE DOMÍNIO] ' . $problem . '.' . PHP_EOL);
             }
         } catch(RepositoryException $exception) {
-            echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.' . PHP_EOL);
         } catch(Exception $exception) {
-            echo('[ERRO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO] ' . $exception->getMessage() . '.' . PHP_EOL);
         }
     }
 
     private function deleteBook() : void {
-        echo('Informe o ISBN do livro: ');
+        echo(PHP_EOL . '--- Exclusão de livro ---' . PHP_EOL . PHP_EOL);
+        echo('ISBN do livro: ');
         $isbn = readline();
         try{ 
-            $this->deleteBookController->delete($isbn);
-            echo('Livro excluído com sucesso.');
+            $this->deleteBookController->delete(trim($isbn));
+            echo(PHP_EOL . '[SUCESSO] Livro excluído com sucesso.' . PHP_EOL);
         } catch(DomainException $exception) {
             foreach ($exception->getProblems() as $problem) {
-                echo('[ERRO DE DOMÍNIO] ' . $problem . ', ');
+                echo(PHP_EOL . '[ERRO DE DOMÍNIO] ' . $problem . '.' . PHP_EOL);
             }
         } catch(RepositoryException $exception) {
-            echo('[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO DE REPOSITÓRIO] ' . $exception->getMessage() . '.' . PHP_EOL);
         } catch(Exception $exception) {
-            echo('[ERRO] ' . $exception->getMessage() . '.');
+            echo(PHP_EOL . '[ERRO] ' . $exception->getMessage() . '.' . PHP_EOL);
         }
     }
 

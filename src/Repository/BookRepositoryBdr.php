@@ -36,7 +36,23 @@ class BookRepositoryBdr implements BookRepository {
         }
     }
 
-    public function listByAuthor(string $authorName) : ?array {
+    public function delete(string $isbn) : bool {
+        try {
+            $sql = <<<SQL
+                DELETE FROM book 
+                WHERE isbn = :isbn
+            SQL;
+            $statement = $this->pdo->prepare($sql);
+            $statement->execute( [ 
+                'isbn' => $isbn
+            ] );
+            return $statement->rowCount() > 0;
+        } catch(PDOException $exception) {
+            throw new RepositoryException($exception->getMessage());
+        }
+    }
+
+    public function getByAuthor(string $authorName) : ?array {
         try {
             $sql = <<<SQL
                 SELECT 
@@ -63,7 +79,37 @@ class BookRepositoryBdr implements BookRepository {
         }
     }
 
-    public function listByTitle(string $title) : ?array {
+    public function getByIsbn(string $isbn) : ?array {
+        try{ 
+            $sql = <<<SQL
+                SELECT 
+                    book.id, 
+                    book.isbn,
+                    book.title,
+                    book.year,
+                    book.era,
+                    book.location, 
+                    author.id as author_id, 
+                    author.name as author_name
+                FROM book
+                JOIN author ON book.author_id = author.id
+                WHERE book.isbn = :isbn
+            SQL;
+            $statement = $this->pdo->prepare($sql);
+            $statement->execute( [
+                'isbn' => $isbn
+            ] );
+            $data = $statement->fetch();
+            if($data === false) {
+                return null;
+            }
+            return $data;
+        } catch(PDOException $exception) {
+            throw new RepositoryException($exception->getMessage());
+        }
+    }
+
+    public function getByTitle(string $title) : ?array {
         try {
             $sql = <<<SQL
                 SELECT 
@@ -90,6 +136,24 @@ class BookRepositoryBdr implements BookRepository {
         }
     }
     
+    public function update(string $isbn, string $title, string $location) : void {
+        try {
+            $sql = <<<SQL
+                UPDATE book
+                SET title = :title, location = :location
+                WHERE isbn = :isbn
+            SQL;
+            $statement = $this->pdo->prepare($sql);
+            $statement->execute( [
+                'isbn' => $isbn,
+                'title' => $title,
+                'location' => $location
+            ] );
+        } catch(PDOException $exception) {
+            throw new RepositoryException($exception->getMessage());
+        }
+    }
+
 }
 
 
